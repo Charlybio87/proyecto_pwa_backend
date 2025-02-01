@@ -4,6 +4,7 @@ import mongoose from './config/mongoDB.config.js'
 import connectToMongoDB from './config/mongoDB.config.js'
 import User from './models/User.model.js'
 import cors from 'cors'
+import verifyApiKeyMiddleware from './middlewares/verifyApiKeyMiddleware.js'
 
 
 const app = express()
@@ -19,6 +20,7 @@ app.use(
 )
 
 app.use(express.json())
+app.use(verifyApiKeyMiddleware)
 
 //Status router
 //Route: /api/status
@@ -39,6 +41,8 @@ import authRouter from './routes/auth.route.js'
 import channelRouter from './routes/channel.route.js'
 import { sendMail } from './utils/mail.util.js'
 import workspaceRouter from './routes/workspace.route.js'
+import { authMiddleware } from './middlewares/auth.middleware.js'
+
 
 
 //Delegamos el flujo de consultas a /api/status al enrutador de status
@@ -49,6 +53,8 @@ app.use('/api/auth', authRouter)
 app.use('/api/workspace', workspaceRouter)
 
 app.use('/api/channel', channelRouter)
+
+app.get('/api/profile', authMiddleware ,async (request,response)=>{})
 
 app.listen(PORT, () =>{
     console.log(`El servidor se esta ejecutando en http://localhost:${PORT}`)
